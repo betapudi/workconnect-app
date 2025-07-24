@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+
+    <div class="container mt-5 mb-5" style="max-width: 400px;">
+        <h2 class="text-center mt-4 mb-4">Login</h2>
+        <form id="loginForm" class="mt-4">
+            <div class="form-group">
+                <label for="mobileNumber">Mobile Number</label>
+                <input type="text" class="form-control" id="mobileNumber" placeholder="Enter your mobile number" required>
+            </div>
+            <div class="form-group">
+                <label for="userType">I am a:</label>
+                <select class="form-control" id="userType" required>
+                    <option value="" disabled selected>Select user type</option>
+                    <option value="customer">Customer</option>
+                    <option value="provider">Service Provider</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+            <div id="loginMsg" class="alert mt-3 d-none" role="alert"></div>
+            <p class="text-center mt-3">Don't have an account? <a href="CustomerRegister.html">Register here</a></p>
+        </form>
+    </div>
+
+    <!-- Floating Home Button -->
+    <a href="../index.html" class="fab-home" title="Home">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            const userType = document.getElementById('userType').value;
+            const msgDiv = document.getElementById('loginMsg');
+            msgDiv.classList.add('d-none');
+            try {
+                const result = await window.loginUser(mobile, userType);
+                if (result.success) {
+                    msgDiv.className = 'alert alert-success mt-3';
+                    msgDiv.textContent = 'Login successful! Redirecting...';
+                    msgDiv.classList.remove('d-none');
+                    // Store mobile for dashboard use
+                    if (userType === 'customer') {
+                        localStorage.setItem('customerMobile', mobile);
+                        localStorage.setItem('userType', 'customer');
+                        setTimeout(() => {
+                            window.location.href = "CustomerDashboard.html";
+                        }, 1000);
+                    } else if (userType === 'provider') {
+                        localStorage.setItem('providerMobile', mobile);
+                        localStorage.setItem('userType', 'provider');
+                        setTimeout(() => {
+                            window.location.href = "ProviderDashboard.html";
+                        }, 1000);
+                    }
+                } else {
+                    msgDiv.className = 'alert alert-danger mt-3';
+                    msgDiv.textContent = result.message || 'Invalid credentials. Please try again or register.';
+                    msgDiv.classList.remove('d-none');
+                }
+            } catch (err) {
+                msgDiv.className = 'alert alert-danger mt-3';
+                msgDiv.textContent = 'Login failed. Try again.';
+                msgDiv.classList.remove('d-none');
+            }
+        });
+    </script>
+    <footer class="app-footer">
+        &copy; 2025 Service Booking App
+    </footer>
+</body>
+</html>

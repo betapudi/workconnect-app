@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+
+    <div class="profile-card mt-4 mb-5">
+        <div class="profile-title">Customer Profile</div>
+        <form id="customerProfileForm" autocomplete="off">
+            <div class="form-group">
+                <label for="customerName">Name</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="customerMobile">Mobile Number</label>
+                <input type="text" class="form-control" id="customerMobile" placeholder="Enter your mobile number" required readonly>
+            </div>
+            <!-- Add more fields as needed -->
+            <button type="submit" class="btn btn-primary btn-block mt-3">Update Profile</button>
+            <div id="profileMsg" class="alert mt-3 d-none" role="alert"></div>
+        </form>
+        <div class="text-center mt-3">
+            <a href="CustomerDashboard.html" class="btn btn-link">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Floating Home Button -->
+    <a href="../index.html" class="fab-home" title="Home">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <script>
+        // Toggle settings dropdown handled by header.js
+
+        // Redirect if not logged in
+        let userType = localStorage.getItem('userType');
+        let mobile = localStorage.getItem('customerMobile');
+        if (!mobile) {
+            alert('Please log in first.');
+            window.location.href = 'Login.html';
+        }
+
+        // Load profile data
+        async function loadProfile() {
+            const res = await fetch(`http://localhost:3001/api/customers/${mobile}`);
+            const data = await res.json();
+            document.getElementById('customerName').value = data.name || '';
+            document.getElementById('customerMobile').value = data.mobile || mobile;
+        }
+
+        document.getElementById('customerProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('customerName').value.trim();
+            const profileMsg = document.getElementById('profileMsg');
+            profileMsg.classList.add('d-none');
+            try {
+                const res = await fetch(`http://localhost:3001/api/customers/${mobile}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    profileMsg.className = 'alert alert-success mt-3';
+                    profileMsg.textContent = 'Profile updated successfully!';
+                } else {
+                    profileMsg.className = 'alert alert-danger mt-3';
+                    profileMsg.textContent = result.message || 'Failed to update profile.';
+                }
+                profileMsg.classList.remove('d-none');
+            } catch (err) {
+                profileMsg.className = 'alert alert-danger mt-3';
+                profileMsg.textContent = 'Update failed. Try again.';
+                profileMsg.classList.remove('d-none');
+            }
+        });
+
+        loadProfile();
+    </script>
+    <footer class="app-footer">
+        &copy; 2025 Service Booking App
+    </footer>
+</body>
+</html>

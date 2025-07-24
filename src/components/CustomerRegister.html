@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+    
+    <div class="container mt-5" style="max-width: 400px;">
+        <!-- <a href="../index.html" class="btn btn-link mb-3">&larr; Back to Home</a> -->
+        <h2 class="text-center mb-4">Customer Registration</h2>
+        <form id="customerRegisterForm" autocomplete="off">
+            <div class="form-group">
+                <label for="customerName">Name</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="customerMobile">Mobile Number</label>
+                <input type="tel" class="form-control" id="customerMobile" placeholder="Enter your mobile number"
+                    pattern="[0-9]{10}" maxlength="10" required aria-describedby="mobileHelp">
+                <small id="mobileHelp" class="form-text text-muted">Enter a 10-digit mobile number.</small>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+            <div id="successMsg" class="alert alert-success mt-3 d-none" role="alert"></div>
+            <div id="errorMsg" class="alert alert-danger mt-3 d-none" role="alert"></div>
+        </form>
+        <p class="text-center mt-3">Already have an account? <a href="Login.html">Login here</a></p>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('customerRegisterForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = document.getElementById('customerName').value.trim();
+            const mobile = document.getElementById('customerMobile').value.trim();
+            const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
+            successMsg.classList.add('d-none');
+            errorMsg.classList.add('d-none');
+            try {
+                const result = await window.registerCustomer(mobile, name);
+                if (result.error) {
+                    errorMsg.textContent = result.error;
+                    errorMsg.classList.remove('d-none');
+                } else {
+                    successMsg.textContent = "Registration successful!";
+                    successMsg.classList.remove('d-none');
+                    document.getElementById('customerRegisterForm').reset();
+                }
+            } catch (err) {
+                errorMsg.textContent = "Registration failed. Try again.";
+                errorMsg.classList.remove('d-none');
+            }
+        });
+
+        // Toggle settings dropdown
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsDropdown = document.getElementById('settingsDropdown');
+        settingsBtn.onclick = function (e) {
+            e.stopPropagation();
+            settingsDropdown.classList.toggle('show');
+        };
+        document.body.onclick = function () {
+            settingsDropdown.classList.remove('show');
+        };
+
+        // Set user info and links
+        let userType = localStorage.getItem('userType');
+        let userName = '';
+        let mobile = '';
+        if (userType === 'customer') {
+            mobile = localStorage.getItem('customerMobile');
+            fetch(`http://localhost:3001/api/customers/${mobile}`)
+                .then(res => res.json())
+                .then(data => {
+                    userName = data.name || '';
+                    document.getElementById('userNameDisplay').textContent = userName;
+                });
+            document.getElementById('profileLink').href = "CustomerProfile.html";
+            document.getElementById('editProfileLink').href = "CustomerProfile.html";
+        } else if (userType === 'provider') {
+            mobile = localStorage.getItem('providerMobile');
+            fetch(`http://localhost:3001/api/providers/${mobile}`)
+                .then(res => res.json())
+                .then(data => {
+                    userName = data.name || '';
+                    document.getElementById('userNameDisplay').textContent = userName;
+                });
+            document.getElementById('profileLink').href = "ProviderProfile.html";
+            document.getElementById('editProfileLink').href = "ProviderProfile.html";
+        } else {
+            document.getElementById('userNameDisplay').textContent = "Admin";
+            document.getElementById('profileLink').style.display = "none";
+            document.getElementById('editProfileLink').style.display = "none";
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "Login.html";
+        }
+    </script>
+    <!-- Footer -->
+    <footer class="app-footer">
+        &copy; 2025 Service Booking App
+    </footer>
+</body>
+
+</html>

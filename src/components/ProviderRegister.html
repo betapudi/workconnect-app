@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Provider Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+    <div class="container mt-5" style="max-width: 400px;">
+        <!-- <a href="../index.html" class="btn btn-link mb-3">&larr; Back to Home</a> -->
+        <h2 class="text-center mb-4">Service Provider Registration</h2>
+        <form id="providerRegisterForm" autocomplete="off">
+            <div class="form-group">
+                <label for="providerName">Name</label>
+                <input type="text" class="form-control" id="providerName" placeholder="Enter your name" required>
+            </div>
+                        <div class="form-group">
+                <label for="providerGender">Gender</label>
+                <input type="text" class="form-control" id="providerGender" placeholder="Enter your gender" required>
+            </div>
+            <div class="form-group">
+                <label for="providerAge">Age</label>
+                <input type="text" class="form-control" id="providerAge" placeholder="Enter your age" required>
+            </div>
+            <div class="form-group">
+                <label for="providerMobile">Mobile Number</label>
+                <input type="tel" class="form-control" id="providerMobile" placeholder="Enter your mobile number" pattern="[0-9]{10}" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label for="providerSkills">Skills (comma separated)</label>
+                <input type="text" class="form-control" id="providerSkills" placeholder="e.g. Plumber, Electrician" required>
+            </div>
+            <div class="form-group">
+                <label for="providerLocation">Location/Village</label>
+                <input type="text" class="form-control" id="providerLocation" placeholder="Enter your village or locality" required>
+            </div>
+            <div class="form-group">
+                <label for="providerTaluk">Taluk/Mandal</label>
+                <input type="text" class="form-control" id="providerTaluk" placeholder="Enter your Taluk or Mandal" required>
+            </div>
+            <div class="form-group">
+                <label for="providerDistrict">District</label>
+                <input type="text" class="form-control" id="providerDistrict" placeholder="Enter your District" required>
+            </div>
+            <div class="form-group">
+                <label for="providerState">State</label>
+                <input type="text" class="form-control" id="providerState" placeholder="Enter your State" required>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Register</button>
+            <div id="successMsg" class="alert alert-success mt-3 d-none" role="alert"></div>
+            <div id="errorMsg" class="alert alert-danger mt-3 d-none" role="alert"></div>
+        </form>
+        <p class="text-center mt-3">Already have an account? <a href="Login.html">Login here</a></p>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('providerRegisterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('providerName').value.trim();
+            const mobile = document.getElementById('providerMobile').value.trim();
+            const skills = document.getElementById('providerSkills').value.trim();
+            const location = document.getElementById('providerLocation').value.trim();
+            const taluk = document.getElementById('providerTaluk').value.trim();
+            const district = document.getElementById('providerDistrict').value.trim();
+            const state = document.getElementById('providerState').value.trim();
+            const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
+            successMsg.classList.add('d-none');
+            errorMsg.classList.add('d-none');
+            try {
+                const result = await window.registerProvider(mobile, name, skills, location, taluk, district, state);
+                if (result.error) {
+                    errorMsg.textContent = result.error;
+                    errorMsg.classList.remove('d-none');
+                } else {
+                    successMsg.textContent = "Registration successful!";
+                    successMsg.classList.remove('d-none');
+                    document.getElementById('providerRegisterForm').reset();
+                }
+            } catch (err) {
+                errorMsg.textContent = "Registration failed. Try again.";
+                errorMsg.classList.remove('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

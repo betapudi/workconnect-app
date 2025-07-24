@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+
+    <div class="container mt-4 mb-5">
+        <h2 class="mb-4 text-center">Welcome, <span id="welcomeName"></span>!</h2>
+        <ul class="nav nav-tabs mb-3" id="dashboardTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="workers-tab" data-toggle="tab" href="#workers" role="tab"
+                    aria-controls="workers" aria-selected="true">Find Providers</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="bookings-tab" data-toggle="tab" href="#bookings" role="tab"
+                    aria-controls="bookings" aria-selected="false">Your Bookings</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="dashboardTabsContent">
+            <div class="tab-pane fade show active" id="workers" role="tabpanel" aria-labelledby="workers-tab">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Book a Service Provider</h5>
+                        <form id="searchForm" class="form-inline mb-3 flex-wrap">
+                            <select class="form-control mr-2 mb-2" id="searchState" data-label="States">
+                                <option value="">All States</option>
+                            </select>
+                            <select class="form-control mr-2 mb-2" id="searchDistrict" data-label="Districts">
+                                <option value="">All Districts</option>
+                            </select>
+                            <select class="form-control mr-2 mb-2" id="searchTaluk" data-label="Taluks">
+                                <option value="">All Taluks</option>
+                            </select>
+                            <select class="form-control mr-2 mb-2" id="searchLocation" data-label="Locations">
+                                <option value="">All Locations</option>
+                            </select>
+                            <select class="form-control mr-2 mb-2" id="searchSkill" data-label="Skills">
+                                <option value="">All Skills</option>
+                            </select>
+                            <input type="number" class="form-control mr-2 mb-2" id="searchMinRating"
+                                placeholder="Min Rating" min="1" max="5" style="width:110px;">
+                            <button type="submit" class="btn btn-primary mb-2">Search</button>
+                        </form>
+                        <div id="providerResults"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="bookings" role="tabpanel" aria-labelledby="bookings-tab">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Your Bookings</h5>
+                        <div id="bookingHistory"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Home Button -->
+    <a href="../index.html" class="fab-home" title="Home">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <script>
+        // Only read from localStorage, do not set here!
+        let customerMobile = localStorage.getItem('customerMobile');
+        let userType = localStorage.getItem('userType');
+        // For demo/dev: prompt if not set, but in production redirect to login
+        if (!userType || !customerMobile) {
+            // window.location.href = "Login.html"; // For production
+            while (!customerMobile) {
+                customerMobile = prompt('Enter your registered mobile number:');
+                if (!customerMobile) {
+                    alert('Mobile number required!');
+                }
+            }
+            localStorage.setItem('customerMobile', customerMobile);
+            localStorage.setItem('userType', 'customer');
+            userType = 'customer';
+        }
+
+        // Set welcome name
+        document.addEventListener('DOMContentLoaded', function () {
+            if (userType === 'customer' && customerMobile) {
+                fetch(`http://localhost:3001/api/customers/${customerMobile}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('welcomeName').textContent = data.name || '';
+                    });
+            }
+        });
+
+        let allProviders = [];
+        let providersPerPage = 5;
+        let currentPage = 1;
+
+        function renderProvidersPage() {
+            const resultsDiv = document.getElementById('providerResults');
+            if (!allProviders.length) {
+                resultsDiv.innerHTML = '<div class="alert alert-warning">No providers found for these filters.</div>';
+                return;
+            }
+            const start = 0;
+            const end = currentPage * providersPerPage;
+            const visibleProviders = allProviders.slice(start, end);
+
+            // Responsive Bootstrap grid for cards
+            resultsDiv.innerHTML = `
+                <div class="row justify-content-center">
+                    ${visibleProviders.map(p => `
+                        <div class="col-12 col-sm-10 col-md-6 col-lg-4 d-flex align-items-stretch mb-3">
+                            <div class="card w-100 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">${p.name}</h5>
+                                    <p class="card-text">
+                                        <strong>Skills:</strong> ${p.skills}<br>
+                                        <strong>Location:</strong> ${p.location}, ${p.taluk}, ${p.district}, ${p.state}<br>
+                                        <strong>Avg. Rating:</strong> ${p.avgRating ? p.avgRating.toFixed(2) : 'No ratings yet'}
+                                    </p>
+                                    <button class="btn btn-success btn-block" onclick="bookProvider('${p.name}', '${p.mobileNumber}')">Book</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Add Load More button if there are more providers to show
+            if (allProviders.length > end) {
+                resultsDiv.innerHTML += `
+                    <div class="text-center mb-2">
+                        <button class="btn btn-outline-primary" id="loadMoreBtn">Load More</button>
+                    </div>
+                `;
+                document.getElementById('loadMoreBtn').onclick = function () {
+                    currentPage++;
+                    renderProvidersPage();
+                };
+            }
+        }
+
+        // Update the search form submit handler:
+        document.getElementById('searchForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const params = [];
+            const skills = document.getElementById('searchSkill').value.trim();
+            const location = document.getElementById('searchLocation').value.trim();
+            const taluk = document.getElementById('searchTaluk').value.trim();
+            const district = document.getElementById('searchDistrict').value.trim();
+            const state = document.getElementById('searchState').value.trim();
+            const minRating = document.getElementById('searchMinRating').value.trim();
+
+            if (skills) params.push(`skills=${encodeURIComponent(skills)}`);
+            if (location) params.push(`location=${encodeURIComponent(location)}`);
+            if (taluk) params.push(`taluk=${encodeURIComponent(taluk)}`);
+            if (district) params.push(`district=${encodeURIComponent(district)}`);
+            if (state) params.push(`state=${encodeURIComponent(state)}`);
+            if (minRating) params.push(`minRating=${encodeURIComponent(minRating)}`);
+
+            const res = await fetch(`http://localhost:3001/api/providers?${params.join('&')}`);
+            allProviders = await res.json();
+            currentPage = 1;
+            renderProvidersPage();
+        });
+
+        // Book a provider
+        window.bookProvider = async function (providerName, providerMobile) {
+            const res = await fetch('http://localhost:3001/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ providerName, customerMobile, providerMobile })
+            });
+            const result = await res.json();
+            if (result.error) {
+                alert('Booking failed: ' + result.error);
+            } else {
+                alert('Booking request sent!');
+                loadBookings();
+            }
+        };
+
+        // Load booking history
+        async function loadBookings() {
+            const res = await fetch(`http://localhost:3001/api/bookings?customer=${customerMobile}`);
+            const bookings = await res.json();
+
+            // Fetch all reviews by this customer
+            const reviewsRes = await fetch(`http://localhost:3001/api/reviews?customerMobile=${customerMobile}`);
+            let reviews = [];
+            try {
+                const reviewsData = await reviewsRes.json();
+                reviews = Array.isArray(reviewsData) ? reviewsData : [];
+            } catch (e) {
+                reviews = [];
+            }
+
+            const div = document.getElementById('bookingHistory');
+            if (!bookings.length) {
+                div.innerHTML = '<div class="alert alert-info">No bookings yet.</div>';
+                return;
+            }
+            div.innerHTML = bookings.map(b => {
+                // Find review for this booking (robust string comparison)
+                const review = Array.isArray(reviews) ? reviews.find(r => String(r.bookingId) === String(b.id)) : null;
+                return `
+                <div class="border rounded p-2 mb-2">
+                    <strong>Provider Name:</strong> ${b.providerName || ''} <br>
+                    <strong>Provider Mobile:</strong> ${b.providerMobile} <br>
+                    <strong>Status:</strong> ${b.status} <br>
+                    <small>${new Date(b.createdAt).toLocaleString()}</small>
+                    ${review
+                        ? `<div class="mt-2 alert alert-success p-2">
+                                <strong>Your Review:</strong><br>
+                                <span>Rating: ${review.rating} / 5</span><br>
+                                <span>Comment: ${review.comment}</span>
+                            </div>`
+                        : (b.status === 'accepted' || b.status === 'completed')
+                            ? `<div>
+                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="showReviewForm(${b.id}, '${b.providerMobile}')" id="reviewBtn-${b.id}">Leave Review</button>
+                                <div id="reviewForm-${b.id}" style="display:none;" class="mt-2">
+                                    <input type="number" min="1" max="5" id="rating-${b.id}" placeholder="Rating (1-5)" class="form-control mb-1" style="width:120px;display:inline-block;">
+                                    <input type="text" id="comment-${b.id}" placeholder="Comment" class="form-control mb-1" style="width:200px;display:inline-block;">
+                                    <button class="btn btn-success btn-sm" onclick="submitReview(${b.id}, '${b.providerMobile}')">Submit</button>
+                                </div>
+                            </div>`
+                            : ''
+                    }
+                </div>
+                `;
+            }).join('');
+        }
+
+        function showReviewForm(bookingId, providerMobile) {
+            document.getElementById(`reviewForm-${bookingId}`).style.display = 'block';
+        }
+
+        async function submitReview(bookingId, providerMobile) {
+            const rating = document.getElementById(`rating-${bookingId}`).value;
+            const comment = document.getElementById(`comment-${bookingId}`).value;
+            const customerMobile = localStorage.getItem('customerMobile');
+            const res = await fetch('http://localhost:3001/api/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingId, customerMobile, providerMobile, rating, comment })
+            });
+            const result = await res.json();
+            if (result.error) {
+                alert('Failed to submit review: ' + result.error);
+            } else {
+                alert('Review submitted!');
+                // Reload bookings to update UI and remove the button
+                loadBookings();
+            }
+        }
+
+        // Populate cascading dropdowns for state → district → taluk → location → skills
+        async function populateStates() {
+            const states = await fetch('http://localhost:3001/api/states').then(r => r.json());
+            fillSelect('searchState', states);
+        }
+        async function populateDistricts(state) {
+            clearSelect('searchDistrict');
+            clearSelect('searchTaluk');
+            clearSelect('searchLocation');
+            clearSelect('searchSkill');
+            if (!state) return;
+            const districts = await fetch(`http://localhost:3001/api/districts?state=${encodeURIComponent(state)}`).then(r => r.json());
+            fillSelect('searchDistrict', districts);
+        }
+        async function populateTaluks(district) {
+            clearSelect('searchTaluk');
+            clearSelect('searchLocation');
+            clearSelect('searchSkill');
+            if (!district) return;
+            const taluks = await fetch(`http://localhost:3001/api/taluks?district=${encodeURIComponent(district)}`).then(r => r.json());
+            fillSelect('searchTaluk', taluks);
+        }
+        async function populateLocations(taluk) {
+            clearSelect('searchLocation');
+            clearSelect('searchSkill');
+            if (!taluk) return;
+            const locations = await fetch(`http://localhost:3001/api/locations?taluk=${encodeURIComponent(taluk)}`).then(r => r.json());
+            fillSelect('searchLocation', locations);
+        }
+        async function populateSkills(location) {
+            clearSelect('searchSkill');
+            if (!location) return;
+            const skills = await fetch(`http://localhost:3001/api/skills?location=${encodeURIComponent(location)}`).then(r => r.json());
+            fillSelect('searchSkill', skills);
+        }
+        function fillSelect(id, items) {
+            const sel = document.getElementById(id);
+            sel.innerHTML = `<option value="">All ${sel.getAttribute('data-label') || id.replace('search', '')}</option>`;
+            items.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                sel.appendChild(opt);
+            });
+        }
+        function clearSelect(id) {
+            const sel = document.getElementById(id);
+            sel.innerHTML = `<option value="">All ${sel.getAttribute('data-label') || id.replace('search', '')}</option>`;
+        }
+
+        // Attach event listeners for cascading
+        document.addEventListener('DOMContentLoaded', function () {
+            populateStates();
+            document.getElementById('searchState').addEventListener('change', function () {
+                populateDistricts(this.value);
+            });
+            document.getElementById('searchDistrict').addEventListener('change', function () {
+                populateTaluks(this.value);
+            });
+            document.getElementById('searchTaluk').addEventListener('change', function () {
+                populateLocations(this.value);
+            });
+            document.getElementById('searchLocation').addEventListener('change', function () {
+                populateSkills(this.value);
+            });
+            document.getElementById('bookings-tab').addEventListener('click', function () {
+                loadBookings();
+            });
+        });
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <footer class="app-footer">
+        &copy; 2025 Service Booking App
+    </footer>
+</body>
+
+</html>

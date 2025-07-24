@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Search</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+    <div class="container mt-5">
+        <h2 class="text-center">Search for Service Providers</h2>
+        <form id="serviceSearchForm" class="mt-4">
+            <div class="form-group">
+                <label for="skill">Enter Skill (e.g., Plumber, Electrician):</label>
+                <input type="text" class="form-control" id="skill" placeholder="Skill" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Search</button>
+        </form>
+        <div id="searchResults" class="mt-4"></div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script src="../js/booking.js"></script>
+</body>
+</html>

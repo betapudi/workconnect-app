@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+
+    <div class="container mt-4 mb-5">
+        <h2 class="mb-4 text-center">Welcome, <span id="welcomeName"></span>!</h2>
+        <div id="providerRating" class="mb-3 text-center"></div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Your Bookings</h5>
+                <div id="providerBookings"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Home Button -->
+    <a href="../index.html" class="fab-home" title="Home">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <script>
+        // Only read from localStorage, do not set here!
+        let providerMobile = localStorage.getItem('providerMobile');
+
+        // Set welcome name
+        document.addEventListener('DOMContentLoaded', function() {
+            let userType = localStorage.getItem('userType');
+            let mobile = localStorage.getItem('providerMobile');
+            if (userType === 'provider' && mobile) {
+                fetch(`http://localhost:3001/api/providers/${mobile}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('welcomeName').textContent = data.name || '';
+                    });
+            }
+        });
+
+        // Load bookings for provider, with reviews inside each booking
+        async function loadProviderBookings() {
+            const res = await fetch(`http://localhost:3001/api/bookings?provider=${providerMobile}`);
+            const bookings = await res.json();
+            // Fetch all reviews for this provider
+            const reviewsRes = await fetch(`http://localhost:3001/api/reviews?provider=${providerMobile}`);
+            const reviews = await reviewsRes.json();
+            const div = document.getElementById('providerBookings');
+            if (!bookings.length) {
+                div.innerHTML = '<div class="alert alert-info">No bookings yet.</div>';
+                return;
+            }
+            div.innerHTML = bookings.map(b => {
+                // Find review for this booking
+                const review = Array.isArray(reviews) ? reviews.find(r => String(r.bookingId) === String(b.id)) : null;
+                return `
+                <div class="border rounded p-2 mb-3">
+                    <strong>Customer:</strong> ${b.customerMobile} <br>
+                    <strong>Status:</strong> ${b.status} <br>
+                    <small>${new Date(b.createdAt).toLocaleString()}</small>
+                    ${review
+                        ? `<div class="mt-2 alert alert-success p-2">
+                                <strong>Customer Review:</strong><br>
+                                <span>Rating: ${review.rating} / 5</span><br>
+                                <span>Comment: ${review.comment}</span>
+                            </div>`
+                        : (b.status === 'pending')
+                            ? `<div>
+                                <button class="btn btn-sm btn-success mt-2 mr-2" onclick="respondBooking(${b.id}, 'accepted')">Accept</button>
+                                <button class="btn btn-sm btn-danger mt-2" onclick="respondBooking(${b.id}, 'rejected')">Reject</button>
+                            </div>`
+                            : ''
+                    }
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Respond to booking
+        window.respondBooking = async function(id, status) {
+            const res = await fetch(`http://localhost:3001/api/bookings/${id}/respond`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            const result = await res.json();
+            if (result.success) {
+                loadProviderBookings();
+            } else {
+                alert(result.message || 'Failed to update booking.');
+            }
+        };
+
+        // Load provider rating only (no reviews section below bookings)
+        async function loadProviderRating() {
+            const providerMobile = localStorage.getItem('providerMobile');
+            const ratingRes = await fetch(`http://localhost:3001/api/providers/${providerMobile}/average-rating`);
+            const ratingData = await ratingRes.json();
+            document.getElementById('providerRating').innerHTML =
+                ratingData && ratingData.avgRating
+                    ? `<span class="badge badge-success p-2" style="font-size:1.1rem;">
+                        <i class="fas fa-star"></i> ${ratingData.avgRating.toFixed(2)} / 5
+                       </span>`
+                    : `<span class="badge badge-secondary p-2" style="font-size:1.1rem;">
+                        No ratings yet
+                       </span>`;
+        }
+
+        // Initial load
+        loadProviderBookings();
+        loadProviderRating();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <footer class="app-footer">
+        &copy; 2025 Service Booking App
+    </footer>
+</body>
+</html>

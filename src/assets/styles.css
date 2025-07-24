@@ -1,0 +1,408 @@
+/* ===== General Body and Typography ===== */
+body {
+    background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', 'Inter', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #00796b;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 0.7em;
+    letter-spacing: 0.5px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 18px 8px 40px 8px;
+}
+
+/* ===== Card Styles ===== */
+.card {
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(33,147,176,0.10);
+    margin: 10px 0;
+    border: 1.5px solid #e0f2f1;
+    padding: 22px 16px 16px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+.card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(33,147,176,0.18), 0 2px 8px rgba(33,147,176,0.10);
+}
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 {
+    color: #2193b0;
+}
+
+/* ===== Button Styles ===== */
+.btn, .btn-block {
+    border-radius: 30px !important;
+    font-weight: 600;
+    font-size: 1.08rem;
+    padding: 0.7rem 1.5rem;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(33,147,176,0.10);
+    border: none;
+}
+.btn:active {
+    transform: scale(0.97);
+}
+.btn-primary {
+    background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
+    color: #fff;
+}
+.btn-success {
+    background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+    color: #fff;
+}
+.btn-info {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: #fff;
+}
+.btn-outline-primary {
+    border: 2px solid #2193b0;
+    color: #2193b0;
+    background: #fff;
+}
+.btn-outline-primary:hover {
+    background: #2193b0;
+    color: #fff;
+}
+
+/* ===== Form Elements ===== */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1.2px solid #b2ebf2;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 1rem;
+    background: #f8f9fa;
+    box-sizing: border-box;
+    transition: border 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: #2193b0;
+    outline: none;
+}
+input[type="submit"], button[type="submit"] {
+    background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 0.7rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(33,147,176,0.10);
+}
+input[type="submit"]:hover, button[type="submit"]:hover {
+    background: #185a9d;
+}
+.form-group {
+    margin-bottom: 18px;
+}
+
+/* ===== Floating App Header ===== */
+.app-header {
+    background: rgba(33,147,176,0.98);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(33,147,176,0.18), 0 1.5px 4px rgba(33,147,176,0.10);
+    padding: 1.1rem 1.2rem;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 1000;
+    flex-wrap: wrap;
+    transition: box-shadow 0.2s;
+    border-bottom: 1.5px solid #e0f2f1;
+}
+body {
+    padding-top: 80px; /* To prevent content hiding behind header */
+}
+.app-header .logo-icon {
+    font-size: 2rem;
+    color: #fff;
+}
+.app-header .app-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+.app-header .settings-btn {
+    background: rgba(255, 255, 255, 0.18);
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin-left: 12px;
+    font-size: 1.3rem;
+    box-shadow: 0 2px 8px rgba(33,147,176,0.10);
+}
+
+/* ===== Dropdown Settings ===== */
+.settings-dropdown {
+    position: absolute;
+    right: 1rem;
+    top: 3.2rem;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(33,147,176,0.13);
+    min-width: 180px;
+    display: none;
+    flex-direction: column;
+    z-index: 200;
+    border: 1px solid #e0f2f1;
+}
+.settings-dropdown.show {
+    display: flex !important;
+}
+.settings-dropdown a, .settings-dropdown button {
+    padding: 0.9rem 1.2rem;
+    color: #2193b0;
+    text-decoration: none;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+}
+.settings-dropdown a:hover, .settings-dropdown button:hover {
+    background: #e3f6fd;
+}
+.settings-dropdown a:last-child, .settings-dropdown button:last-child {
+    border-bottom: none;
+}
+
+/* ===== Section Spacing and Titles ===== */
+.section-padding {
+    padding: 36px 0;
+}
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00796b;
+}
+
+/* ===== Feature Card Improvements ===== */
+.feature-card {
+    padding: 24px 16px;
+    border-radius: 16px;
+    transition: transform 0.18s, box-shadow 0.18s;
+    background-color: #fff;
+}
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(33, 147, 176, 0.15);
+}
+
+/* Circular icon container for Font Awesome */
+.icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px auto;
+    box-shadow: 0 2px 8px rgba(33,147,176,0.10);
+}
+
+/* ===== Modern Service Badges ===== */
+.service-badge {
+    display: inline-block;
+    background: rgba(33,147,176,0.12);
+    color: #2193b0;
+    font-weight: 600;
+    padding: 0.5em 1.3em;
+    margin: 0.3em 0.4em 0.3em 0;
+    border-radius: 2em;
+    box-shadow: 0 2px 8px rgba(33,147,176,0.08);
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    border: 1.5px solid #6dd5ed;
+    backdrop-filter: blur(2px);
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    cursor: pointer;
+    user-select: none;
+}
+.service-badge:hover, .service-badge:focus {
+    background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(33,147,176,0.18);
+    outline: none;
+}
+
+/* ===== Profile Card ===== */
+.profile-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(33,147,176,0.10);
+    padding: 32px 28px 24px 28px;
+    margin: 40px auto 0;
+    max-width: 500px;
+}
+.profile-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2193b0;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+/* ===== Alerts ===== */
+.alert {
+    border-radius: 12px;
+    font-size: 1rem;
+    border: 1.5px solid #b2ebf2;
+    background: #e3f6fd;
+    color: #185a9d;
+}
+
+/* ===== Footer ===== */
+.app-footer {
+    background: #fff;
+    color: #2193b0;
+    text-align: center;
+    padding: 0.7rem 0;
+    font-size: 1rem;
+    position: fixed;
+    width: 100vw;
+    left: 0;
+    bottom: 0;
+    box-shadow: 0 -2px 8px rgba(33,147,176,0.07);
+    opacity: 0.97;
+    z-index: 900;
+}
+
+/* ===== Floating Home Button ===== */
+.fab-home {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 999;
+    background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
+    color: #fff;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(33,147,176,0.18);
+    font-size: 2rem;
+    border: none;
+    outline: none;
+    transition: background 0.2s;
+}
+.fab-home:hover {
+    background: #185a9d;
+}
+
+/* ===== Responsive Grid ===== */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -8px;
+    margin-right: -8px;
+}
+[class*='col-'] {
+    padding: 8px;
+}
+@media (max-width: 992px) {
+    .col-lg-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+@media (max-width: 768px) {
+    .col-md-6, .col-lg-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .container {
+        padding: 8px;
+    }
+    .card {
+        margin: 6px 0;
+    }
+    .section-padding {
+        padding: 24px 0;
+    }
+}
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 1.2rem 0.4rem;
+    }
+    .feature-card {
+        padding: 1rem 0.5rem 0.7rem 0.5rem;
+    }
+    .service-badge {
+        font-size: 0.98rem;
+        padding: 0.5em 1.1em;
+    }
+    .action-btns .btn {
+        margin: 0.4rem 0.3rem;
+    }
+    .profile-card {
+        padding: 18px 10px;
+    }
+    .btn, .btn-block {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+/* ===== Utility Classes ===== */
+.text-shadow {
+    text-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.gap-3 {
+    gap: 1rem !important;
+}
+.mx-2 {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+}
+.my-1 {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+}
+.px-4 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+.py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+.shadow-sm {
+    box-shadow: 0 2px 8px rgba(33,147,176,0.10) !important;
+}
+

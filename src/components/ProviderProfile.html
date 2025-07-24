@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Provider Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+    <script>
+        fetch('../components/Header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+            });
+    </script>
+    <script src="../components/header.js"></script>
+    <div class="profile-card">
+        <div class="profile-title">Provider Profile</div>
+        <form id="providerProfileForm" autocomplete="off">
+            <div class="form-group">
+                <label for="providerName">Name</label>
+                <input type="text" class="form-control" id="providerName" required>
+            </div>
+            <div class="form-group">
+                <label for="providerGender">Gender</label>
+                <input type="text" class="form-control" id="providerGender" required>
+            </div>
+            <div class="form-group">
+                <label for="providerAge">Age</label>
+                <input type="text" class="form-control" id="providerAge" required>
+            </div>
+            <div class="form-group">
+                <label for="providerMobile">Mobile Number</label>
+                <input type="text" class="form-control" id="providerMobile" disabled>
+            </div>
+            <div class="form-group">
+                <label for="providerSkills">Skills</label>
+                <input type="text" class="form-control" id="providerSkills" required>
+            </div>
+            <div class="form-group">
+                <label for="providerLocation">Location/Village</label>
+                <input type="text" class="form-control" id="providerLocation" required>
+            </div>
+            <div class="form-group">
+                <label for="providerTaluk">Taluk/Mandal</label>
+                <input type="text" class="form-control" id="providerTaluk" required>
+            </div>
+            <div class="form-group">
+                <label for="providerDistrict">District</label>
+                <input type="text" class="form-control" id="providerDistrict" required>
+            </div>
+            <div class="form-group">
+                <label for="providerState">State</label>
+                <input type="text" class="form-control" id="providerState" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-3">Update Profile</button>
+            <div id="profileMsg" class="alert mt-3 d-none" role="alert"></div>
+        </form>
+        <div class="text-center mt-3 mb-5">
+            <a href="ProviderDashboard.html" class="btn btn-link">← Back to Dashboard</a>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer class="app-footer">
+        &copy; 2025 Service Booking App
+    </footer>
+    <script>
+        // Toggle settings dropdown
+        function initSettingsDropdown() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            if (!settingsBtn || !settingsDropdown) {
+                setTimeout(initSettingsDropdown, 50);
+                return;
+            }
+            settingsBtn.onclick = function (e) {
+                e.stopPropagation();
+                settingsDropdown.classList.toggle('show');
+            };
+            document.body.onclick = function () {
+                settingsDropdown.classList.remove('show');
+            };
+        }
+        initSettingsDropdown();
+
+        // Set user info and links
+        const userType = localStorage.getItem('userType');
+        const mobile = localStorage.getItem('providerMobile');
+        if (!mobile) {
+            alert('Please log in first.');
+            window.location.href = 'Login.html';
+        }
+        function setHeaderLinks() {
+            const profileLink = document.getElementById('profileLink');
+            const editProfileLink = document.getElementById('editProfileLink');
+            if (!profileLink || !editProfileLink) {
+                setTimeout(setHeaderLinks, 50);
+                return;
+            }
+            if (userType === 'provider') {
+                profileLink.href = "ProviderProfile.html";
+                editProfileLink.href = "ProviderProfile.html";
+            } else if (userType === 'customer') {
+                profileLink.href = "CustomerProfile.html";
+                editProfileLink.href = "CustomerProfile.html";
+            } else {
+                profileLink.style.display = "none";
+                editProfileLink.style.display = "none";
+            }
+        }
+        setHeaderLinks();
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "Login.html";
+        }
+
+        async function loadProfile() {
+            const res = await fetch(`http://localhost:3001/api/providers/${mobile}`);
+            if (!res.ok) {
+                document.getElementById('providerName').value = '';
+                document.getElementById('providerMobile').value = mobile;
+                alert('Provider not found. Please register first.');
+                return;
+            }
+            const data = await res.json();
+            document.getElementById('providerName').value = data.name;
+            document.getElementById('providerGender').value = data.gender;
+            document.getElementById('providerAge').value = data.age;
+            document.getElementById('providerMobile').value = data.mobileNumber;
+            document.getElementById('providerSkills').value = data.skills;
+            document.getElementById('providerLocation').value = data.location;
+            document.getElementById('providerTaluk').value = data.taluk;
+            document.getElementById('providerDistrict').value = data.district;
+            document.getElementById('providerState').value = data.state;
+        }
+        document.getElementById('providerProfileForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = document.getElementById('providerName').value.trim();
+            const gender = document.getElementById('providerGender').value.trim();
+            const age = document.getElementById('providerAge').value.trim();
+            const skills = document.getElementById('providerSkills').value.trim();
+            const location = document.getElementById('providerLocation').value.trim();
+            const taluk = document.getElementById('providerTaluk').value.trim();
+            const district = document.getElementById('providerDistrict').value.trim();
+            const state = document.getElementById('providerState').value.trim();
+            const res = await fetch(`http://localhost:3001/api/providers/${mobile}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, gender, age, skills, location, taluk, district, state })
+            });
+            const result = await res.json();
+            const msg = document.getElementById('profileMsg');
+            if (result.success) {
+                msg.className = 'alert alert-success mt-3';
+                msg.textContent = 'Profile updated! Redirecting...';
+                msg.classList.remove('d-none');
+                setTimeout(() => {
+                    window.location.href = "ProviderDashboard.html";
+                }, 1200);
+            } else {
+                msg.className = 'alert alert-danger mt-3';
+                msg.textContent = result.error || 'Update failed.';
+                msg.classList.remove('d-none');
+            }
+        });
+        loadProfile();
+    </script>
+</body>
+
+</html>
