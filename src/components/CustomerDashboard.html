@@ -2,17 +2,21 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Customer Dashboard</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="../assets/styles.css" />
 </head>
 
 <body>
     <!-- Header -->
-    <div id="header-placeholder"></div>
+    <div id="header-placeholder" role="banner"></div>
     <script>
         fetch('../components/Header.html')
             .then(res => res.text())
@@ -20,11 +24,12 @@
                 document.getElementById('header-placeholder').innerHTML = html;
             });
     </script>
-    <script src="../components/header.js"></script>
+    <script src="../components/header.js" defer></script>
 
-    <div class="container mt-4 mb-5">
-        <h2 class="mb-4 text-center">Welcome, <span id="welcomeName"></span>!</h2>
-        <ul class="nav nav-tabs mb-3" id="dashboardTabs" role="tablist">
+    <main class="container py-4">
+        <h2 class="mb-4 text-center welcome-title">Welcome, <span id="welcomeName"></span>!</h2>
+
+        <ul class="nav nav-tabs mb-3 justify-content-center" id="dashboardTabs" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="workers-tab" data-toggle="tab" href="#workers" role="tab"
                     aria-controls="workers" aria-selected="true">Find Providers</a>
@@ -34,45 +39,47 @@
                     aria-controls="bookings" aria-selected="false">Your Bookings</a>
             </li>
         </ul>
+
         <div class="tab-content" id="dashboardTabsContent">
-            <div class="tab-pane fade show active" id="workers" role="tabpanel" aria-labelledby="workers-tab">
-                <div class="card mb-3 shadow-sm">
+            <section class="tab-pane fade show active" id="workers" role="tabpanel" aria-labelledby="workers-tab" tabindex="0">
+                <div class="card mb-3 shadow-sm rounded-lg border-0">
                     <div class="card-body">
                         <h5 class="card-title">Book a Service Provider</h5>
-                        <form id="searchForm" class="form-inline mb-3 flex-wrap">
-                            <select class="form-control mr-2 mb-2" id="searchState" data-label="States">
+                        <form id="searchForm" class="form-inline flex-wrap mb-3 needs-validation" novalidate>
+                            <select class="form-control mr-2 mb-2 search-select" id="searchState" data-label="States" aria-label="Filter by State">
                                 <option value="">All States</option>
                             </select>
-                            <select class="form-control mr-2 mb-2" id="searchDistrict" data-label="Districts">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchDistrict" data-label="Districts" aria-label="Filter by District">
                                 <option value="">All Districts</option>
                             </select>
-                            <select class="form-control mr-2 mb-2" id="searchTaluk" data-label="Taluks">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchTaluk" data-label="Taluks" aria-label="Filter by Taluk">
                                 <option value="">All Taluks</option>
                             </select>
-                            <select class="form-control mr-2 mb-2" id="searchLocation" data-label="Locations">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchLocation" data-label="Locations" aria-label="Filter by Location">
                                 <option value="">All Locations</option>
                             </select>
-                            <select class="form-control mr-2 mb-2" id="searchSkill" data-label="Skills">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchSkill" data-label="Skills" aria-label="Filter by Skills">
                                 <option value="">All Skills</option>
                             </select>
-                            <input type="number" class="form-control mr-2 mb-2" id="searchMinRating"
-                                placeholder="Min Rating" min="1" max="5" style="width:110px;">
-                            <button type="submit" class="btn btn-primary mb-2">Search</button>
+                            <input type="number" class="form-control mr-2 mb-2" id="searchMinRating" placeholder="Min Rating (1-5)" min="1" max="5" style="width:110px;" aria-label="Minimum rating filter">
+                            <button type="submit" class="btn btn-primary mb-2 px-4">Search</button>
                         </form>
-                        <div id="providerResults"></div>
+
+                        <div id="providerResults" class="provider-results" aria-live="polite" aria-atomic="true"></div>
                     </div>
                 </div>
-            </div>
-            <div class="tab-pane fade" id="bookings" role="tabpanel" aria-labelledby="bookings-tab">
-                <div class="card shadow-sm">
+            </section>
+
+            <section class="tab-pane fade" id="bookings" role="tabpanel" aria-labelledby="bookings-tab" tabindex="0">
+                <div class="card shadow-sm rounded-lg border-0">
                     <div class="card-body">
                         <h5 class="card-title">Your Bookings</h5>
-                        <div id="bookingHistory"></div>
+                        <div id="bookingHistory" class="booking-history" aria-live="polite" aria-atomic="true"></div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-    </div>
+    </main>
 
     <!-- Floating Home Button -->
     <a href="../index.html" class="fab-home" title="Home">
@@ -186,7 +193,7 @@
             const res = await fetch('http://localhost:3001/api/bookings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ providerName, customerMobile, providerMobile })
+                body: JSON.stringify({ customerMobile, providerName, providerMobile })
             });
             const result = await res.json();
             if (result.error) {

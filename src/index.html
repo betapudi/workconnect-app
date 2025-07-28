@@ -3,20 +3,22 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Service Booking App</title>
     <meta name="description"
         content="Book trusted service providers instantly. Verified professionals for plumbing, electrical, cleaning, and more." />
-    <link rel="stylesheet" href="assets/styles.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-uH2hC6+8F9K7rW6hQG34T6c3ypZGFLFb6hJWFR2nqzk1+7eRhOTZr4YbwXkKquTZmu8JvZux4DgJhfjcBbxp+Q=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
     <!-- Header -->
-    <div id="header-placeholder"></div>
+    <div id="header-placeholder" role="banner"></div>
     <script>
         fetch('components/Header.html')
             .then(res => res.text())
@@ -24,55 +26,64 @@
                 document.getElementById('header-placeholder').innerHTML = html;
             });
     </script>
-    <script src="components/header.js"></script>
+    <script src="components/header.js" defer></script>
 
     <main>
 
         <!-- Hero Section -->
-        <section
-            class="hero-section text-center d-flex flex-column align-items-center justify-content-center section-padding">
-            <h1><i class="fa-solid fa-hands-helping mr-2"></i> Find Trusted Service Providers Instantly</h1>
-            <p class="lead">Book verified plumbers, electricians, cleaners, and more.<br>Hassle-free, secure, and fast!
+        <section class="hero-section text-center d-flex flex-column align-items-center justify-content-center section-padding"
+            aria-label="Introduction and main call to action">
+            <div class="hero-bg-overlay"></div>
+            <h5 class="hero-title text-white my-3">
+                <i class="fa-solid fa-hands-helping mr-2" aria-hidden="true"></i> Find Trusted Service Providers Instantly
+            </h5>
+            <p class="lead hero-subtitle mb-3 mx-auto" style="max-width:500px;">
+                Book verified plumbers, electricians, cleaners, and more.<br class="d-none d-sm-block" />
+                Hassle-free, secure, and fast!
             </p>
-            <div class="action-btns d-flex flex-wrap justify-content-center gap-3 mt-3">
-                <a href="components/CustomerRegister.html" class="btn btn-primary m-2">Register as Customer</a>
-                <a href="components/ProviderRegister.html" class="btn btn-success m-2">Register as Service Provider</a>
-                <a href="components/Login.html" class="btn btn-info m-2">Login</a>
+            <div class="action-btns d-flex flex-wrap justify-content-center gap-3 mt-3" role="group" aria-label="Registration and login actions">
+                <a href="components/CustomerRegister.html" class="btn btn-primary btn-lg btn-hover m-2" aria-label="Register as Customer">
+                    Register as Customer
+                </a>
+                <a href="components/ProviderRegister.html" class="btn btn-success btn-lg btn-hover m-2" aria-label="Register as Service Provider">
+                    Register as Service Provider
+                </a>
+                <a href="components/Login.html" class="btn btn-info btn-lg btn-hover m-2" aria-label="Login">
+                    Login
+                </a>
             </div>
         </section>
 
         <!-- Why Choose Us -->
-        <section class="section-padding bg-light">
+        <section class="section-padding bg-light" aria-labelledby="why-choose-us-title">
             <div class="container text-center">
-                <h2 class="section-title mb-5">Why Choose Us?</h2>
+                <h2 id="why-choose-us-title" class="section-title mb-5">Why Choose Us?</h2>
                 <div class="row justify-content-center">
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="card feature-card shadow-sm h-100 border-0">
-                            <div class="icon-circle mb-3 bg-primary text-white">
-                                <i class="fas fa-user-check"></i>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card feature-card shadow-sm h-100 border-0 text-center px-4 py-5">
+                            <div class="icon-circle mb-3 bg-primary text-white mx-auto" aria-hidden="true">
+                                <i class="fas fa-user-check fa-2x"></i>
                             </div>
                             <h5 class="fw-bold text-primary">Verified Profiles</h5>
-                            <p class="text-muted small">All service providers are background checked and verified for
-                                your safety.</p>
+                            <p class="text-muted small">All service providers are background checked and verified for your safety.</p>
                         </div>
                     </div>
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="card feature-card shadow-sm h-100 border-0">
-                            <div class="icon-circle mb-3 bg-success text-white">
-                                <i class="fas fa-bolt"></i>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card feature-card shadow-sm h-100 border-0 text-center px-4 py-5">
+                            <div class="icon-circle mb-3 bg-success text-white mx-auto" aria-hidden="true">
+                                <i class="fas fa-bolt fa-2x"></i>
                             </div>
                             <h5 class="fw-bold text-success">Quick Booking</h5>
                             <p class="text-muted small">Book a professional in just a few clicks, anytime, anywhere.</p>
                         </div>
                     </div>
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="card feature-card shadow-sm h-100 border-0">
-                            <div class="icon-circle mb-3 bg-info text-white">
-                                <i class="fas fa-shield-alt"></i>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card feature-card shadow-sm h-100 border-0 text-center px-4 py-5">
+                            <div class="icon-circle mb-3 bg-info text-white mx-auto" aria-hidden="true">
+                                <i class="fas fa-shield-alt fa-2x"></i>
                             </div>
                             <h5 class="fw-bold text-info">Quality Assurance</h5>
-                            <p class="text-muted small">We guarantee quality service and secure payments for every
-                                booking.</p>
+                            <p class="text-muted small">We guarantee quality service and secure payments for every booking.</p>
                         </div>
                     </div>
                 </div>
@@ -80,37 +91,35 @@
         </section>
 
         <!-- Popular Services -->
-        <section id="popular-services" class="section-padding text-center">
+        <section id="popular-services" class="section-padding text-center" aria-label="Popular services offered">
             <div class="container">
                 <h2 class="section-title mb-4">Popular Services</h2>
-                <div class="d-flex flex-wrap justify-content-center">
-                    <span class="service-badge">Plumber</span>
-                    <span class="service-badge">Electrician</span>
-                    <span class="service-badge">Carpenter</span>
-                    <span class="service-badge">Cleaner</span>
-                    <span class="service-badge">Painter</span>
-                    <span class="service-badge">AC Mechanic</span>
-                    <span class="service-badge">Gardener</span>
-                    <span class="service-badge">Driver</span>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">Plumber</span>
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">Electrician</span>
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">Carpenter</span>
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">Cleaner</span>
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">Painter</span>
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">AC Mechanic</span>
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">Gardener</span>
+                    <span tabindex="0" class="service-badge" role="button" aria-pressed="false">Driver</span>
                 </div>
             </div>
         </section>
 
         <!-- Contact / Footer Info -->
-        <section id="contact" class="section-padding bg-dark text-white text-center">
+        <section id="contact" class="section-padding bg-dark text-white text-center" aria-labelledby="footer-about-title footer-contact-title">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 mb-4">
-                        <h3 class="text-white">About Us</h3>
-                        <p class="text-white">We connect you with trusted service providers in your area. Our platform
-                            ensures you get the best professionals for your needs, with verified profiles and secure
-                            payments.</p>
+                        <h3 id="footer-about-title" class="text-white">About Us</h3>
+                        <p>We connect you with trusted service providers in your area. Our platform ensures you get the best professionals for your needs, with verified profiles and secure payments.</p>
                     </div>
                     <div class="col-md-6 mb-4">
-                        <h3 class="text-white">Contact Us</h3>
-                        <p class="text-white">For questions or assistance, email <a
-                                href="mailto:support@servicebookingapp.com"
-                                class="text-white text-underline">support@servicebookingapp.com</a>.</p>
+                        <h3 id="footer-contact-title" class="text-white">Contact Us</h3>
+                        <p>For questions or assistance, email <a
+                            href="mailto:support@servicebookingapp.com" class="text-white text-underline"
+                            >support@servicebookingapp.com</a>.</p>
                     </div>
                 </div>
             </div>
@@ -118,12 +127,18 @@
 
     </main>
 
-    <footer class="app-footer">&copy; 2025 Service Booking App</footer>
+   
+    <!-- Footer -->
+    <footer class="app-footer" role="contentinfo" aria-label="Footer">
+        &copy; 2025 Service Booking App
+    </footer>
+
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdQ85WkACFZE586cOoRZ/hVqGZPahEhzKIqFe+ZikZ9frF5RtQJh1otsXh0QOu" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 
 </html>

@@ -2,17 +2,22 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Registration</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/styles.css">
-</head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Customer Registration - Service Booking App</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Your existing styles -->
+    <link rel="stylesheet" href="../assets/styles.css" />
+
 
 <body>
     <!-- Header -->
-    <!-- Header -->
-    <div id="header-placeholder"></div>
+    <div id="header-placeholder" role="banner"></div>
+
     <script>
         fetch('../components/Header.html')
             .then(res => res.text())
@@ -20,38 +25,84 @@
                 document.getElementById('header-placeholder').innerHTML = html;
             });
     </script>
-    <script src="../components/header.js"></script>
-    
-    <div class="container mt-5" style="max-width: 400px;">
-        <!-- <a href="../index.html" class="btn btn-link mb-3">&larr; Back to Home</a> -->
-        <h2 class="text-center mb-4">Customer Registration</h2>
-        <form id="customerRegisterForm" autocomplete="off">
+    <script src="../components/header.js" defer></script>
+
+    <!-- Registration Form Container -->
+    <main class="registration-container" role="main" aria-labelledby="registerHeading">
+        <h2 id="registerHeading">Customer Registration</h2>
+        <form id="customerRegisterForm" autocomplete="off" novalidate>
             <div class="form-group">
-                <label for="customerName">Name</label>
-                <input type="text" class="form-control" id="customerName" placeholder="Enter your name" required>
+                <label for="customerName">Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" aria-hidden="true"><i class="fa fa-user"></i></span>
+                    </div>
+                    <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Enter your name"
+                        required aria-required="true" aria-describedby="nameHelp" minlength="2" />
+                </div>
+                <small id="nameHelp" class="form-text text-muted">Please enter your full name.</small>
             </div>
+
             <div class="form-group">
-                <label for="customerMobile">Mobile Number</label>
-                <input type="tel" class="form-control" id="customerMobile" placeholder="Enter your mobile number"
-                    pattern="[0-9]{10}" maxlength="10" required aria-describedby="mobileHelp">
-                <small id="mobileHelp" class="form-text text-muted">Enter a 10-digit mobile number.</small>
+                <label for="customerMobile">Mobile Number <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" aria-hidden="true"><i class="fa fa-phone"></i></span>
+                    </div>
+                    <input type="tel" class="form-control" id="customerMobile" name="customerMobile"
+                        placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" maxlength="10" required aria-required="true"
+                        aria-describedby="mobileHelp" inputmode="tel" />
+                </div>
+                <small id="mobileHelp" class="form-text text-muted">Enter a valid 10-digit mobile number.</small>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Register</button>
-            <div id="successMsg" class="alert alert-success mt-3 d-none" role="alert"></div>
-            <div id="errorMsg" class="alert alert-danger mt-3 d-none" role="alert"></div>
+
+            <button type="submit" class="btn btn-primary btn-block" aria-label="Register as a customer">Register</button>
+
+            <div id="successMsg" class="alert alert-success mt-3 d-none" role="alert" aria-live="polite"></div>
+            <div id="errorMsg" class="alert alert-danger mt-3 d-none" role="alert" aria-live="assertive"></div>
         </form>
-        <p class="text-center mt-3">Already have an account? <a href="Login.html">Login here</a></p>
-    </div>
-    <script src="../js/auth.js"></script>
+
+        <p class="text-center mt-4 mb-0" aria-label="Already registered login link">
+            Already have an account? <a href="Login.html" tabindex="0" aria-describedby="login">Login here</a>
+        </p>
+    </main>
+
+    <!-- Floating Home Button -->
+    <a href="../index.html" class="fab-home" title="Home">
+        <i class="fas fa-home"></i>
+    </a>
+    <!-- Scripts -->
+    <script src="../js/auth.js" defer></script>
     <script>
-        document.getElementById('customerRegisterForm').addEventListener('submit', async function (e) {
+        // Form submit handler
+        document.getElementById('customerRegisterForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('customerName').value.trim();
-            const mobile = document.getElementById('customerMobile').value.trim();
+
+            // Clear messages
             const successMsg = document.getElementById('successMsg');
             const errorMsg = document.getElementById('errorMsg');
             successMsg.classList.add('d-none');
             errorMsg.classList.add('d-none');
+            successMsg.textContent = '';
+            errorMsg.textContent = '';
+
+            const name = e.target.customerName.value.trim();
+            const mobile = e.target.customerMobile.value.trim();
+
+            // Basic client validation
+            if (name.length < 2) {
+                errorMsg.textContent = "Please enter a valid name (at least 2 characters).";
+                errorMsg.classList.remove('d-none');
+                e.target.customerName.focus();
+                return;
+            }
+            if (!/^\d{10}$/.test(mobile)) {
+                errorMsg.textContent = "Please enter a valid 10-digit mobile number.";
+                errorMsg.classList.remove('d-none');
+                e.target.customerMobile.focus();
+                return;
+            }
+
             try {
                 const result = await window.registerCustomer(mobile, name);
                 if (result.error) {
@@ -60,62 +111,30 @@
                 } else {
                     successMsg.textContent = "Registration successful!";
                     successMsg.classList.remove('d-none');
-                    document.getElementById('customerRegisterForm').reset();
+                    e.target.reset();
                 }
             } catch (err) {
-                errorMsg.textContent = "Registration failed. Try again.";
+                errorMsg.textContent = "Registration failed. Please try again.";
                 errorMsg.classList.remove('d-none');
             }
         });
 
-        // Toggle settings dropdown
+        // Dropdown toggle code - safely check elements
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsDropdown = document.getElementById('settingsDropdown');
-        settingsBtn.onclick = function (e) {
-            e.stopPropagation();
-            settingsDropdown.classList.toggle('show');
-        };
-        document.body.onclick = function () {
-            settingsDropdown.classList.remove('show');
-        };
-
-        // Set user info and links
-        let userType = localStorage.getItem('userType');
-        let userName = '';
-        let mobile = '';
-        if (userType === 'customer') {
-            mobile = localStorage.getItem('customerMobile');
-            fetch(`http://localhost:3001/api/customers/${mobile}`)
-                .then(res => res.json())
-                .then(data => {
-                    userName = data.name || '';
-                    document.getElementById('userNameDisplay').textContent = userName;
-                });
-            document.getElementById('profileLink').href = "CustomerProfile.html";
-            document.getElementById('editProfileLink').href = "CustomerProfile.html";
-        } else if (userType === 'provider') {
-            mobile = localStorage.getItem('providerMobile');
-            fetch(`http://localhost:3001/api/providers/${mobile}`)
-                .then(res => res.json())
-                .then(data => {
-                    userName = data.name || '';
-                    document.getElementById('userNameDisplay').textContent = userName;
-                });
-            document.getElementById('profileLink').href = "ProviderProfile.html";
-            document.getElementById('editProfileLink').href = "ProviderProfile.html";
-        } else {
-            document.getElementById('userNameDisplay').textContent = "Admin";
-            document.getElementById('profileLink').style.display = "none";
-            document.getElementById('editProfileLink').style.display = "none";
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = "Login.html";
+        if (settingsBtn && settingsDropdown) {
+            settingsBtn.onclick = function (e) {
+                e.stopPropagation();
+                settingsDropdown.classList.toggle('show');
+            };
+            document.body.onclick = () => {
+                settingsDropdown.classList.remove('show');
+            };
         }
     </script>
+
     <!-- Footer -->
-    <footer class="app-footer">
+    <footer class="app-footer" role="contentinfo" aria-label="Footer">
         &copy; 2025 Service Booking App
     </footer>
 </body>

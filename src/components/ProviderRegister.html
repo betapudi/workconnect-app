@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Service Provider Registration</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/styles.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="../assets/styles.css" />
 </head>
+
 <body>
     <!-- Header -->
-    <div id="header-placeholder"></div>
+    <div id="header-placeholder" role="banner"></div>
     <script>
         fetch('../components/Header.html')
             .then(res => res.text())
@@ -17,56 +26,134 @@
                 document.getElementById('header-placeholder').innerHTML = html;
             });
     </script>
-    <script src="../components/header.js"></script>
-    <div class="container mt-5" style="max-width: 400px;">
-        <!-- <a href="../index.html" class="btn btn-link mb-3">&larr; Back to Home</a> -->
-        <h2 class="text-center mb-4">Service Provider Registration</h2>
-        <form id="providerRegisterForm" autocomplete="off">
-            <div class="form-group">
-                <label for="providerName">Name</label>
-                <input type="text" class="form-control" id="providerName" placeholder="Enter your name" required>
-            </div>
-                        <div class="form-group">
-                <label for="providerGender">Gender</label>
-                <input type="text" class="form-control" id="providerGender" placeholder="Enter your gender" required>
-            </div>
-            <div class="form-group">
-                <label for="providerAge">Age</label>
-                <input type="text" class="form-control" id="providerAge" placeholder="Enter your age" required>
-            </div>
-            <div class="form-group">
-                <label for="providerMobile">Mobile Number</label>
-                <input type="tel" class="form-control" id="providerMobile" placeholder="Enter your mobile number" pattern="[0-9]{10}" maxlength="10" required>
-            </div>
-            <div class="form-group">
-                <label for="providerSkills">Skills (comma separated)</label>
-                <input type="text" class="form-control" id="providerSkills" placeholder="e.g. Plumber, Electrician" required>
-            </div>
-            <div class="form-group">
-                <label for="providerLocation">Location/Village</label>
-                <input type="text" class="form-control" id="providerLocation" placeholder="Enter your village or locality" required>
-            </div>
-            <div class="form-group">
-                <label for="providerTaluk">Taluk/Mandal</label>
-                <input type="text" class="form-control" id="providerTaluk" placeholder="Enter your Taluk or Mandal" required>
-            </div>
-            <div class="form-group">
-                <label for="providerDistrict">District</label>
-                <input type="text" class="form-control" id="providerDistrict" placeholder="Enter your District" required>
-            </div>
-            <div class="form-group">
-                <label for="providerState">State</label>
-                <input type="text" class="form-control" id="providerState" placeholder="Enter your State" required>
-            </div>
-            <button type="submit" class="btn btn-success btn-block">Register</button>
-            <div id="successMsg" class="alert alert-success mt-3 d-none" role="alert"></div>
-            <div id="errorMsg" class="alert alert-danger mt-3 d-none" role="alert"></div>
-        </form>
-        <p class="text-center mt-3">Already have an account? <a href="Login.html">Login here</a></p>
-    </div>
+    <script src="../components/header.js" defer></script>
+
+    <main>
+        <div class="registration-container container mt-5" style="max-width: 420px;">
+            <h2 class="text-center mb-4">Service Provider Registration</h2>
+            <form id="providerRegisterForm" autocomplete="off" novalidate>
+                <div class="form-group">
+                    <label for="providerName">Name <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-user"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="providerName" placeholder="Enter your name" required
+                            minlength="2">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerGender">Gender <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-venus-mars"></i></span>
+                        </div>
+                        <select id="providerGender" class="form-control" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerAge">Age <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        <input type="number" min="15" max="100" class="form-control" id="providerAge"
+                            placeholder="Enter your age" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerMobile">Mobile Number <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-phone"></i></span>
+                        </div>
+                        <input type="tel" class="form-control" id="providerMobile"
+                            placeholder="Enter your 10-digit mobile number" pattern="[0-9]{10}" maxlength="10" required
+                            inputmode="tel">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerSkills">Skills (comma separated) <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-tools"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="providerSkills"
+                            placeholder="e.g. Plumber, Electrician" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerLocation">Location/Village <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i
+                                    class="fa fa-map-marker-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="providerLocation"
+                            placeholder="Enter your village or locality" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerTaluk">Taluk/Mandal <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-map-pin"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="providerTaluk"
+                            placeholder="Enter your Taluk or Mandal" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerDistrict">District <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-city"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="providerDistrict" placeholder="Enter your District"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="providerState">State <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" aria-hidden="true"><i class="fa fa-flag"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="providerState" placeholder="Enter your State"
+                            required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block">Register</button>
+
+                <div id="successMsg" class="alert alert-success mt-3 d-none" role="alert" aria-live="polite"></div>
+                <div id="errorMsg" class="alert alert-danger mt-3 d-none" role="alert" aria-live="assertive"></div>
+            </form>
+            <p class="text-center mt-3">
+                Already have an account? <a href="Login.html">Login here</a>
+            </p>
+        </div>
+    </main>
+    <!-- Floating Home Button -->
+    <a href="../index.html" class="fab-home" title="Home">
+        <i class="fas fa-home"></i>
+    </a>
     <script src="../js/auth.js"></script>
     <script>
-        document.getElementById('providerRegisterForm').addEventListener('submit', async function(e) {
+        document.getElementById('providerRegisterForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const name = document.getElementById('providerName').value.trim();
             const mobile = document.getElementById('providerMobile').value.trim();
@@ -95,5 +182,11 @@
             }
         });
     </script>
+    
+    <!-- Footer -->
+    <footer class="app-footer" role="contentinfo" aria-label="Footer">
+        &copy; 2025 Service Booking App
+    </footer>
 </body>
+
 </html>
