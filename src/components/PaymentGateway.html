@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/styles.css">
     <title>Payment Gateway</title>
 </head>
+
 <body>
     <!-- Header -->
     <!-- Header -->
@@ -43,56 +45,60 @@
         <div id="payment-status" class="mt-3"></div>
     </div>
     <!-- Footer -->
-<footer class="app-footer">
-    &copy; 2025 Service Booking App
-</footer>
+    <footer class="app-footer">
+        &copy; 2025 Service Booking App
+    </footer>
     <script src="../js/payment.js"></script>
     <script>
-    // Toggle settings dropdown
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsDropdown = document.getElementById('settingsDropdown');
-    settingsBtn.onclick = function(e) {
-        e.stopPropagation();
-        settingsDropdown.classList.toggle('show');
-    };
-    document.body.onclick = function() {
-        settingsDropdown.classList.remove('show');
-    };
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : 'https://your-app-name.onrender.com';
+        // Toggle settings dropdown
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsDropdown = document.getElementById('settingsDropdown');
+        settingsBtn.onclick = function (e) {
+            e.stopPropagation();
+            settingsDropdown.classList.toggle('show');
+        };
+        document.body.onclick = function () {
+            settingsDropdown.classList.remove('show');
+        };
 
-    // Set user info and links
-    let userType = localStorage.getItem('userType');
-    let userName = '';
-    let mobile = '';
-    if (userType === 'customer') {
-        mobile = localStorage.getItem('customerMobile');
-        fetch(`http://localhost:3001/api/customers/${mobile}`)
-            .then(res => res.json())
-            .then(data => {
-                userName = data.name || '';
-                document.getElementById('userNameDisplay').textContent = userName;
-            });
-        document.getElementById('profileLink').href = "CustomerProfile.html";
-        document.getElementById('editProfileLink').href = "CustomerProfile.html";
-    } else if (userType === 'provider') {
-        mobile = localStorage.getItem('providerMobile');
-        fetch(`http://localhost:3001/api/providers/${mobile}`)
-            .then(res => res.json())
-            .then(data => {
-                userName = data.name || '';
-                document.getElementById('userNameDisplay').textContent = userName;
-            });
-        document.getElementById('profileLink').href = "ProviderProfile.html";
-        document.getElementById('editProfileLink').href = "ProviderProfile.html";
-    } else {
-        document.getElementById('userNameDisplay').textContent = "Admin";
-        document.getElementById('profileLink').style.display = "none";
-        document.getElementById('editProfileLink').style.display = "none";
-    }
+        // Set user info and links
+        let userType = localStorage.getItem('userType');
+        let userName = '';
+        let mobile = '';
+        if (userType === 'customer') {
+            mobile = localStorage.getItem('customerMobile');
+            fetch(`${API_BASE_URL}/api/customers/${mobile}`)
+                .then(res => res.json())
+                .then(data => {
+                    userName = data.name || '';
+                    document.getElementById('userNameDisplay').textContent = userName;
+                });
+            document.getElementById('profileLink').href = "CustomerProfile.html";
+            document.getElementById('editProfileLink').href = "CustomerProfile.html";
+        } else if (userType === 'provider') {
+            mobile = localStorage.getItem('providerMobile');
+            fetch(`${API_BASE_URL}/api/providers/${mobile}`)
+                .then(res => res.json())
+                .then(data => {
+                    userName = data.name || '';
+                    document.getElementById('userNameDisplay').textContent = userName;
+                });
+            document.getElementById('profileLink').href = "ProviderProfile.html";
+            document.getElementById('editProfileLink').href = "ProviderProfile.html";
+        } else {
+            document.getElementById('userNameDisplay').textContent = "Admin";
+            document.getElementById('profileLink').style.display = "none";
+            document.getElementById('editProfileLink').style.display = "none";
+        }
 
-    function logout() {
-        localStorage.clear();
-        window.location.href = "Login.html";
-    }
-</script>
+        function logout() {
+            localStorage.clear();
+            window.location.href = "Login.html";
+        }
+    </script>
 </body>
+
 </html>

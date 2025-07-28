@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Customer Profile</title>
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="../assets/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
+
 <body>
     <!-- Header -->
     <div id="header-placeholder"></div>
@@ -29,7 +31,8 @@
             </div>
             <div class="form-group">
                 <label for="customerMobile">Mobile Number</label>
-                <input type="text" class="form-control" id="customerMobile" placeholder="Enter your mobile number" required readonly>
+                <input type="text" class="form-control" id="customerMobile" placeholder="Enter your mobile number"
+                    required readonly>
             </div>
             <!-- Add more fields as needed -->
             <button type="submit" class="btn btn-primary btn-block mt-3">Update Profile</button>
@@ -47,7 +50,9 @@
 
     <script>
         // Toggle settings dropdown handled by header.js
-
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : 'https://your-app-name.onrender.com';
         // Redirect if not logged in
         let userType = localStorage.getItem('userType');
         let mobile = localStorage.getItem('customerMobile');
@@ -58,19 +63,19 @@
 
         // Load profile data
         async function loadProfile() {
-            const res = await fetch(`http://localhost:3001/api/customers/${mobile}`);
+            const res = await fetch(`${API_BASE_URL}/api/customers/${mobile}`);
             const data = await res.json();
             document.getElementById('customerName').value = data.name || '';
             document.getElementById('customerMobile').value = data.mobile || mobile;
         }
 
-        document.getElementById('customerProfileForm').addEventListener('submit', async function(e) {
+        document.getElementById('customerProfileForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const name = document.getElementById('customerName').value.trim();
             const profileMsg = document.getElementById('profileMsg');
             profileMsg.classList.add('d-none');
             try {
-                const res = await fetch(`http://localhost:3001/api/customers/${mobile}`, {
+                const res = await fetch(`${API_BASE_URL}/api/customers/${mobile}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name })
@@ -97,4 +102,5 @@
         &copy; 2025 Service Booking App
     </footer>
 </body>
+
 </html>

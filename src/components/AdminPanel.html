@@ -54,6 +54,9 @@
             });
     </script>
     <script>
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? '${API_BASE_URL}'
+            : 'https://your-app-name.onrender.com';
         function showTab(tab) {
             document.getElementById('customersTab').style.display = tab === 'customers' ? '' : 'none';
             document.getElementById('providersTab').style.display = tab === 'providers' ? '' : 'none';
@@ -64,7 +67,7 @@
 
         // Load all customers
         async function loadCustomers() {
-            const res = await fetch('http://localhost:3001/api/admin/customers');
+            const res = await fetch('${API_BASE_URL}/api/admin/customers');
             const customers = await res.json();
             document.getElementById('customersTab').innerHTML = `
                 <h4>Customers</h4>
@@ -79,7 +82,7 @@
 
         // Load all providers
         async function loadProviders() {
-            const res = await fetch('http://localhost:3001/api/admin/providers');
+            const res = await fetch('${API_BASE_URL}/api/admin/providers');
             const providers = await res.json();
             document.getElementById('providersTab').innerHTML = `
                 <h4>Providers</h4>
@@ -107,7 +110,7 @@
 
         // Load all bookings
         async function loadBookings() {
-            const res = await fetch('http://localhost:3001/api/admin/bookings');
+            const res = await fetch('${API_BASE_URL}/api/admin/bookings');
             const bookings = await res.json();
             document.getElementById('bookingsTab').innerHTML = `
                 <h4>Bookings</h4>
@@ -130,7 +133,7 @@
 
         // Approve or reject provider
         async function approveProvider(mobile, approved) {
-            await fetch(`http://localhost:3001/api/admin/providers/${mobile}/approve`, {
+            await fetch(`${API_BASE_URL}/api/admin/providers/${mobile}/approve`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ approved })

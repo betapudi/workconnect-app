@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="../assets/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
+
 <body>
     <!-- Header -->
     <div id="header-placeholder"></div>
@@ -37,15 +39,18 @@
     </a>
 
     <script>
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? '${API_BASE_URL}'
+            : 'https://your-app-name.onrender.com';
         // Only read from localStorage, do not set here!
         let providerMobile = localStorage.getItem('providerMobile');
 
         // Set welcome name
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             let userType = localStorage.getItem('userType');
             let mobile = localStorage.getItem('providerMobile');
             if (userType === 'provider' && mobile) {
-                fetch(`http://localhost:3001/api/providers/${mobile}`)
+                fetch(`${API_BASE_URL}/api/providers/${mobile}`)
                     .then(res => res.json())
                     .then(data => {
                         document.getElementById('welcomeName').textContent = data.name || '';
@@ -55,10 +60,10 @@
 
         // Load bookings for provider, with reviews inside each booking
         async function loadProviderBookings() {
-            const res = await fetch(`http://localhost:3001/api/bookings?provider=${providerMobile}`);
+            const res = await fetch(`${API_BASE_URL}/api/bookings?provider=${providerMobile}`);
             const bookings = await res.json();
             // Fetch all reviews for this provider
-            const reviewsRes = await fetch(`http://localhost:3001/api/reviews?provider=${providerMobile}`);
+            const reviewsRes = await fetch(`${API_BASE_URL}/api/reviews?provider=${providerMobile}`);
             const reviews = await reviewsRes.json();
             const div = document.getElementById('providerBookings');
             if (!bookings.length) {
@@ -92,8 +97,8 @@
         }
 
         // Respond to booking
-        window.respondBooking = async function(id, status) {
-            const res = await fetch(`http://localhost:3001/api/bookings/${id}/respond`, {
+        window.respondBooking = async function (id, status) {
+            const res = await fetch(`${API_BASE_URL}/api/bookings/${id}/respond`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status })
@@ -109,7 +114,7 @@
         // Load provider rating only (no reviews section below bookings)
         async function loadProviderRating() {
             const providerMobile = localStorage.getItem('providerMobile');
-            const ratingRes = await fetch(`http://localhost:3001/api/providers/${providerMobile}/average-rating`);
+            const ratingRes = await fetch(`${API_BASE_URL}/api/providers/${providerMobile}/average-rating`);
             const ratingData = await ratingRes.json();
             document.getElementById('providerRating').innerHTML =
                 ratingData && ratingData.avgRating
@@ -131,4 +136,5 @@
         &copy; 2025 Service Booking App
     </footer>
 </body>
+
 </html>

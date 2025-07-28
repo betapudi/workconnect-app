@@ -1,4 +1,8 @@
 function initHeader() {
+    // Set API base URL for Render or local
+    const API_BASE_URL = window.location.hostname === 'localhost'
+        ? 'http://localhost:3001'
+        : 'https://your-app-name.onrender.com';
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsDropdown = document.getElementById('settingsDropdown');
     const userNameDisplay = document.getElementById('userNameDisplay');
@@ -26,7 +30,7 @@ function initHeader() {
     let mobile = '';
     if (userType === 'customer') {
         mobile = localStorage.getItem('customerMobile');
-        fetch(`http://localhost:3001/api/customers/${mobile}`)
+        fetch(`${API_BASE_URL}/api/customers/${mobile}`)
             .then(res => res.json())
             .then(data => {
                 userName = data.name || '';
@@ -37,7 +41,7 @@ function initHeader() {
         editProfileLink.href = "CustomerProfile.html";
     } else if (userType === 'provider') {
         mobile = localStorage.getItem('providerMobile');
-        fetch(`http://localhost:3001/api/providers/${mobile}`)
+        fetch(`${API_BASE_URL}/api/providers/${mobile}`)
             .then(res => res.json())
             .then(data => {
                 userName = data.name || '';

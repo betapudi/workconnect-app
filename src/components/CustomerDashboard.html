@@ -41,27 +41,35 @@
         </ul>
 
         <div class="tab-content" id="dashboardTabsContent">
-            <section class="tab-pane fade show active" id="workers" role="tabpanel" aria-labelledby="workers-tab" tabindex="0">
+            <section class="tab-pane fade show active" id="workers" role="tabpanel" aria-labelledby="workers-tab"
+                tabindex="0">
                 <div class="card mb-3 shadow-sm rounded-lg border-0">
                     <div class="card-body">
                         <h5 class="card-title">Book a Service Provider</h5>
                         <form id="searchForm" class="form-inline flex-wrap mb-3 needs-validation" novalidate>
-                            <select class="form-control mr-2 mb-2 search-select" id="searchState" data-label="States" aria-label="Filter by State">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchState" data-label="States"
+                                aria-label="Filter by State">
                                 <option value="">All States</option>
                             </select>
-                            <select class="form-control mr-2 mb-2 search-select" id="searchDistrict" data-label="Districts" aria-label="Filter by District">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchDistrict"
+                                data-label="Districts" aria-label="Filter by District">
                                 <option value="">All Districts</option>
                             </select>
-                            <select class="form-control mr-2 mb-2 search-select" id="searchTaluk" data-label="Taluks" aria-label="Filter by Taluk">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchTaluk" data-label="Taluks"
+                                aria-label="Filter by Taluk">
                                 <option value="">All Taluks</option>
                             </select>
-                            <select class="form-control mr-2 mb-2 search-select" id="searchLocation" data-label="Locations" aria-label="Filter by Location">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchLocation"
+                                data-label="Locations" aria-label="Filter by Location">
                                 <option value="">All Locations</option>
                             </select>
-                            <select class="form-control mr-2 mb-2 search-select" id="searchSkill" data-label="Skills" aria-label="Filter by Skills">
+                            <select class="form-control mr-2 mb-2 search-select" id="searchSkill" data-label="Skills"
+                                aria-label="Filter by Skills">
                                 <option value="">All Skills</option>
                             </select>
-                            <input type="number" class="form-control mr-2 mb-2" id="searchMinRating" placeholder="Min Rating (1-5)" min="1" max="5" style="width:110px;" aria-label="Minimum rating filter">
+                            <input type="number" class="form-control mr-2 mb-2" id="searchMinRating"
+                                placeholder="Min Rating (1-5)" min="1" max="5" style="width:110px;"
+                                aria-label="Minimum rating filter">
                             <button type="submit" class="btn btn-primary mb-2 px-4">Search</button>
                         </form>
 
@@ -87,6 +95,9 @@
     </a>
 
     <script>
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : 'https://your-app-name.onrender.com';
         // Only read from localStorage, do not set here!
         let customerMobile = localStorage.getItem('customerMobile');
         let userType = localStorage.getItem('userType');
@@ -107,7 +118,7 @@
         // Set welcome name
         document.addEventListener('DOMContentLoaded', function () {
             if (userType === 'customer' && customerMobile) {
-                fetch(`http://localhost:3001/api/customers/${customerMobile}`)
+                fetch(`${API_BASE_URL}/api/customers/${customerMobile}`)
                     .then(res => res.json())
                     .then(data => {
                         document.getElementById('welcomeName').textContent = data.name || '';
@@ -182,7 +193,7 @@
             if (state) params.push(`state=${encodeURIComponent(state)}`);
             if (minRating) params.push(`minRating=${encodeURIComponent(minRating)}`);
 
-            const res = await fetch(`http://localhost:3001/api/providers?${params.join('&')}`);
+            const res = await fetch(`${API_BASE_URL}/api/providers?${params.join('&')}`);
             allProviders = await res.json();
             currentPage = 1;
             renderProvidersPage();
@@ -190,7 +201,7 @@
 
         // Book a provider
         window.bookProvider = async function (providerName, providerMobile) {
-            const res = await fetch('http://localhost:3001/api/bookings', {
+            const res = await fetch(`${API_BASE_URL}/api/bookings`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ customerMobile, providerName, providerMobile })
@@ -206,11 +217,11 @@
 
         // Load booking history
         async function loadBookings() {
-            const res = await fetch(`http://localhost:3001/api/bookings?customer=${customerMobile}`);
+            const res = await fetch(`${API_BASE_URL}/api/bookings?customer=${customerMobile}`);
             const bookings = await res.json();
 
             // Fetch all reviews by this customer
-            const reviewsRes = await fetch(`http://localhost:3001/api/reviews?customerMobile=${customerMobile}`);
+            const reviewsRes = await fetch(`${API_BASE_URL}/api/reviews?customerMobile=${customerMobile}`);
             let reviews = [];
             try {
                 const reviewsData = await reviewsRes.json();
@@ -263,7 +274,7 @@
             const rating = document.getElementById(`rating-${bookingId}`).value;
             const comment = document.getElementById(`comment-${bookingId}`).value;
             const customerMobile = localStorage.getItem('customerMobile');
-            const res = await fetch('http://localhost:3001/api/reviews', {
+            const res = await fetch(`${API_BASE_URL}/api/reviews`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ bookingId, customerMobile, providerMobile, rating, comment })
@@ -280,7 +291,7 @@
 
         // Populate cascading dropdowns for state → district → taluk → location → skills
         async function populateStates() {
-            const states = await fetch('http://localhost:3001/api/states').then(r => r.json());
+            const states = await fetch(`${API_BASE_URL}/api/states`).then(r => r.json());
             fillSelect('searchState', states);
         }
         async function populateDistricts(state) {
@@ -289,7 +300,7 @@
             clearSelect('searchLocation');
             clearSelect('searchSkill');
             if (!state) return;
-            const districts = await fetch(`http://localhost:3001/api/districts?state=${encodeURIComponent(state)}`).then(r => r.json());
+            const districts = await fetch(`${API_BASE_URL}/api/districts?state=${encodeURIComponent(state)}`).then(r => r.json());
             fillSelect('searchDistrict', districts);
         }
         async function populateTaluks(district) {
@@ -297,20 +308,20 @@
             clearSelect('searchLocation');
             clearSelect('searchSkill');
             if (!district) return;
-            const taluks = await fetch(`http://localhost:3001/api/taluks?district=${encodeURIComponent(district)}`).then(r => r.json());
+            const taluks = await fetch(`${API_BASE_URL}/api/taluks?district=${encodeURIComponent(district)}`).then(r => r.json());
             fillSelect('searchTaluk', taluks);
         }
         async function populateLocations(taluk) {
             clearSelect('searchLocation');
             clearSelect('searchSkill');
             if (!taluk) return;
-            const locations = await fetch(`http://localhost:3001/api/locations?taluk=${encodeURIComponent(taluk)}`).then(r => r.json());
+            const locations = await fetch(`${API_BASE_URL}/api/locations?taluk=${encodeURIComponent(taluk)}`).then(r => r.json());
             fillSelect('searchLocation', locations);
         }
         async function populateSkills(location) {
             clearSelect('searchSkill');
             if (!location) return;
-            const skills = await fetch(`http://localhost:3001/api/skills?location=${encodeURIComponent(location)}`).then(r => r.json());
+            const skills = await fetch(`${API_BASE_URL}/api/skills?location=${encodeURIComponent(location)}`).then(r => r.json());
             fillSelect('searchSkill', skills);
         }
         function fillSelect(id, items) {

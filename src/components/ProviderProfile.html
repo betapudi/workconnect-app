@@ -71,6 +71,9 @@
         &copy; 2025 Service Booking App
     </footer>
     <script>
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : 'https://your-app-name.onrender.com';
         // Toggle settings dropdown
         function initSettingsDropdown() {
             const settingsBtn = document.getElementById('settingsBtn');
@@ -122,7 +125,7 @@
         }
 
         async function loadProfile() {
-            const res = await fetch(`http://localhost:3001/api/providers/${mobile}`);
+            const res = await fetch(`${API_BASE_URL}/api/providers/${mobile}`);
             if (!res.ok) {
                 document.getElementById('providerName').value = '';
                 document.getElementById('providerMobile').value = mobile;
@@ -150,7 +153,7 @@
             const taluk = document.getElementById('providerTaluk').value.trim();
             const district = document.getElementById('providerDistrict').value.trim();
             const state = document.getElementById('providerState').value.trim();
-            const res = await fetch(`http://localhost:3001/api/providers/${mobile}`, {
+            const res = await fetch(`${API_BASE_URL}/api/providers/${mobile}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, gender, age, skills, location, taluk, district, state })

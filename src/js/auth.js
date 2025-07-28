@@ -2,8 +2,8 @@
 
 // Set API base URL for Render or local
 const API_BASE_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3001'
-  : 'https://workconnect-app.onrender.com';
+    ? 'http://localhost:3001'
+    : 'https://workconnect-app.onrender.com';
 
 // Register customer via API
 async function registerCustomer(mobileNumber, name, role) {
