@@ -25,6 +25,7 @@ sqlite_dump.sql
 sqlite_dump2.sql
 db.js
 
+
 # VS Code settings
 .vscode/
 
