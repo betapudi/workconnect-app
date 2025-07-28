@@ -23,7 +23,6 @@ build/
 users.db
 sqlite_dump.sql
 sqlite_dump2.sql
-db.js
 service-booking-app.zip
 
 
