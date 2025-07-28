@@ -2,9 +2,9 @@
   "name": "service-booking-app",
   "version": "1.0.0",
   "description": "A web application for registering customers and service providers like plumbers and electricians.",
-  "main": "src/js/app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "live-server .",
+    "start": "node server",
     "build": "echo 'Build step not defined yet.'"
   },
   "dependencies": {
@@ -27,6 +27,6 @@
     "customer",
     "provider"
   ],
-  "author": "Your Name",
-  "license": "MIT"
+  "author": "GeoInfy",
+  "license": "ISC"
 }
