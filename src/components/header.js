@@ -2,7 +2,7 @@ function initHeader() {
     // Set API base URL for Render or local
     const API_BASE_URL = window.location.hostname === 'localhost'
         ? 'http://localhost:3001'
-        : 'https://your-app-name.onrender.com';
+        : 'https://workconnect-app.onrender.com';
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsDropdown = document.getElementById('settingsDropdown');
     const userNameDisplay = document.getElementById('userNameDisplay');
