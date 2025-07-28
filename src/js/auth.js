@@ -1,8 +1,13 @@
 // auth.js
 
+// Set API base URL for Render or local
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://workconnect-app.onrender.com';
+
 // Register customer via API
 async function registerCustomer(mobileNumber, name, role) {
-    const res = await fetch('http://localhost:3001/api/register/customer', {
+    const res = await fetch(`${API_BASE_URL}/api/register/customer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobileNumber, name, role })
@@ -12,7 +17,7 @@ async function registerCustomer(mobileNumber, name, role) {
 
 // Register provider via API
 async function registerProvider(mobileNumber, name, skills, location, taluk, district, state) {
-    const res = await fetch('http://localhost:3001/api/register/provider', {
+    const res = await fetch(`${API_BASE_URL}/api/register/provider`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobileNumber, name, skills, location, taluk, district, state })
@@ -22,7 +27,7 @@ async function registerProvider(mobileNumber, name, skills, location, taluk, dis
 
 // Login via API
 async function loginUser(mobileNumber, userType) {
-    const res = await fetch('http://localhost:3001/api/login', {
+    const res = await fetch(`${API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobileNumber, userType })

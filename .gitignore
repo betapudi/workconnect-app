@@ -25,6 +25,15 @@ sqlite_dump.sql
 sqlite_dump2.sql
 service-booking-app.zip
 
+# files
+mockData.js
+payment.js
+pages/
+# bookingHistory.html
+# Dashboardprovider.html
+# dashboarduser.html
+desktop.ini
+
 
 # VS Code settings
 .vscode/
