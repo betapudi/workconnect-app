@@ -65,7 +65,7 @@ function initHeader() {
 
     window.logout = function () {
         localStorage.clear();
-        window.location.href = "Login.html";
+        window.location.href = "/components/Login.html"; // Use the correct relative path
     };
 }
 
